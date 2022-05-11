@@ -1,4 +1,5 @@
 import React,{useState} from "react";
+import {flushSync} from "react-dom";
 import './App.css';
 import ButtonDrum from "./Components/ButtonDrum";
 import MyErrorBoundary from "./MyErrorBoundary";
@@ -16,7 +17,29 @@ const App=()=>{
         {label:"X", displayDescription:"wow", fileLink:"https://drive.google.com/uc?export=download&id=1IG082FEfx73n5PEUUFihdjlLK5JqywyR"},
         {label:"C", displayDescription:"yo", fileLink:"https://drive.google.com/uc?export=download&id=1JIqPwLjwF2Gx7pXKAf2Iw0y12F0EnmTb"},
     ];
-    //used for updating the div with the display description as text
+    //handlekeypress and useeffect add event listeners, used to see if a key press matches a button's label and if it does, play that button
+    const handleKeyPress=(event)=>{
+        for(let i=0;i<audioClips.length;i++){
+            if(event.keyCode===audioClips[i].label.charCodeAt(0)){
+                playAudioClips(audioClips[i]);
+            }
+        }   
+    }
+    React.useEffect(()=>{
+        document.addEventListener("keydown", handleKeyPress);
+        return()=>{
+            document.removeEventListener("keydown",handleKeyPress);
+        }
+    });
+    //sets description of preview, gets the audio element of a button by its id, and plays it. flushsync is used to make it so that the tests work, idk how it works, makes the call syncronous or smth
+    const playAudioClips=(clip)=>{
+        flushSync(()=>{
+            setDisplayDescription(clip.displayDescription);
+        })
+        let newClip=document.getElementById(clip.label);
+        newClip.play();
+    }
+    //state of display description, used to describe the audio clip last plyed
     const [displayDescription, setDisplayDescription]=useState("Click a button!");
     return(
         //maps each audio clip to a button, unique key is the label, each audio clip object is passed into the button, and the setDisplayDescription function is sent in so that when a button is clicked, it updates on screen
@@ -26,7 +49,7 @@ const App=()=>{
         <p id="display">{displayDescription.toString()}</p>
         <div id="buttonContainer">
             {audioClips.map((clip)=>(
-                <ButtonDrum setDisplayDescription={setDisplayDescription} key= {clip.label} clip={clip} />
+                <ButtonDrum setDisplayDescription={setDisplayDescription} key= {clip.label} clip={clip} playAudioClips={playAudioClips}/>
             ))}
         </div>
         </MyErrorBoundary>
