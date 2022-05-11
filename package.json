@@ -1,7 +1,7 @@
 {
   "name": "drummachine",
   "version": "0.1.0",
-  "homepage":"https://cardinalcyn.github.io/drummachine",
+  "homepage": "https://cardinalcyn.github.io/fccdrummachine",
   "private": true,
   "overrides": {
     "autoprefixer": "10.4.5"
